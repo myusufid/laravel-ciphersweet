@@ -126,8 +126,9 @@ class Encrypter implements Contracts\Encrypter
         );
 
         $value_final = $field->decryptValue(
-            $model->{$column}
+            $value
         );
+
         return $value_final;
     }
 
