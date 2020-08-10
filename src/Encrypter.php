@@ -37,7 +37,8 @@ class Encrypter implements Contracts\Encrypter
         $this->crypto = $this->createCryptoInstance();
 
         $this->engine = new CipherSweet(
-            $this->provider, $this->crypto
+            $this->provider,
+            $this->crypto
         );
     }
 
@@ -75,10 +76,11 @@ class Encrypter implements Contracts\Encrypter
     public function encrypt(Model $model, string $column)
     {
         $field = $this->createFieldWithIndexes(
-            $model, $column
+            $model,
+            $column
         );
 
-        list ($text, $indexes) = $field->prepareForStorage(
+        list($text, $indexes) = $field->prepareForStorage(
             (string)$model->{$column}
         );
 
@@ -98,7 +100,8 @@ class Encrypter implements Contracts\Encrypter
     public function decrypt(Model $model, string $column)
     {
         $field = $this->createFieldWithIndexes(
-            $model, $column
+            $model,
+            $column
         );
 
         $value = $field->decryptValue(
@@ -112,6 +115,22 @@ class Encrypter implements Contracts\Encrypter
         return $model;
     }
 
+    public function decryptValue($model, $column, $value)
+    {
+        $table = $model->getTable();
+
+        $field = new EncryptedField(
+            $this->engine,
+            $table,
+            $column
+        );
+
+        $value_final = $field->decryptValue(
+            $model->{$column}
+        );
+        return $value_final;
+    }
+
     /**
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param string $column
@@ -122,7 +141,8 @@ class Encrypter implements Contracts\Encrypter
     public function columnIndexes(Model $model, string $column, $value)
     {
         $field = $this->createFieldWithIndexes(
-            $model, $column
+            $model,
+            $column
         );
 
         $indexes = $field->getAllBlindIndexes($value);
@@ -156,7 +176,9 @@ class Encrypter implements Contracts\Encrypter
         $table = $model->getTable();
 
         $field = new EncryptedField(
-            $this->engine, $table, $column
+            $this->engine,
+            $table,
+            $column
         );
 
         if (method_exists($model, $method)) {

@@ -24,7 +24,7 @@ trait HasEncryption
     public function encrypt($attributes = ['*'])
     {
         /** @var \Bjornvoesten\CipherSweet\Contracts\Encrypter $encrypter */
-        $encrypter = resolve(
+        $encrypter = app(
             'Bjornvoesten\CipherSweet\Contracts\Encrypter'
         );
 
@@ -42,7 +42,7 @@ trait HasEncryption
     public function decrypt($attributes = ['*'])
     {
         /** @var \Bjornvoesten\CipherSweet\Contracts\Encrypter $encrypter */
-        $encrypter = resolve(
+        $encrypter = app(
             'Bjornvoesten\CipherSweet\Contracts\Encrypter'
         );
 
@@ -55,6 +55,16 @@ trait HasEncryption
         }
 
         return $this;
+    }
+
+    public function decryptValue($column, $value)
+    {
+        /** @var \Bjornvoesten\CipherSweet\Contracts\Encrypter $encrypter */
+        $encrypter = app(
+            'Bjornvoesten\CipherSweet\Contracts\Encrypter'
+        );
+
+        return $encrypter->decryptValue($this, $column, $value);
     }
 
     /**
@@ -80,7 +90,7 @@ trait HasEncryption
             'Bjornvoesten\CipherSweet\Eloquent\Builder'
         );
 
-        return resolve(
+        return app(
             $builder,
             ['query' => $query]
         );
